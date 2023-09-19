@@ -33,9 +33,9 @@ async function updateGrid(xDef, yDef) {
         if (array[x][y] != array[xDef][yDef] - i) continue;
         if (
           document.getElementById(`${x}-${y}`).style.backgroundColor == "black"
-        ) {
+        )
           array[x][y] = -1;
-        }
+
         if (array[x][y] == 0) continue;
         if (array[x][y] == -1) continue;
 
@@ -59,9 +59,6 @@ async function updateGrid(xDef, yDef) {
             array[x][y - 1] = array[x][y] - 1;
           }
         } catch {}
-
-        //Make the coloring go from red to white
-
         document.getElementById(`${x}-${y}`).style.backgroundColor =
           "rgb(255 " +
           255 / (array[x][y] * 5) +
@@ -108,6 +105,16 @@ function drawGrid() {
           }
         }
       });
+    }
+  }
+}
+
+function smokeRemove() {
+  for (let x = 0; x < xSize; x++) {
+    for (let y = 0; y < ySize; y++) {
+      if (array[x][y] == -1) continue;
+      array[x][y] = 0;
+      document.getElementById(`${x}-${y}`).style.backgroundColor = "white";
     }
   }
 }

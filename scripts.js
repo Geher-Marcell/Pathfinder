@@ -4,6 +4,8 @@ const ySize = 50;
 const spreadValue = 20;
 var fal = false;
 
+var currentColor = 0;
+
 var array;
 
 onload = () => {
@@ -59,16 +61,27 @@ async function updateGrid(xDef, yDef) {
             array[x][y - 1] = array[x][y] - 1;
           }
         } catch {}
-        document.getElementById(`${x}-${y}`).style.backgroundColor =
-          "rgb(255 " +
-          255 / (array[x][y] * 5) +
-          "," +
-          255 / (array[x][y] * 5) +
-          ")";
+
+        switch (currentColor % 3) {
+          case 0:
+            document.getElementById(`${x}-${y}`).style.backgroundColor =
+              "rgb(255,0, 0)";
+            break;
+          case 1:
+            document.getElementById(`${x}-${y}`).style.backgroundColor =
+              "rgb(0,255, 0)";
+            break;
+          case 2:
+            document.getElementById(`${x}-${y}`).style.backgroundColor =
+              "rgb(0,0, 255)";
+            break;
+        }
       }
     }
     await sleep(10);
   }
+
+  currentColor++;
 }
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -91,21 +104,23 @@ function drawGrid() {
         if (!fal) {
           updateGrid(x, y);
         } else {
-          switch (array[x][y]) {
-            case 0:
-              document.getElementById(`${x}-${y}`).style.backgroundColor =
-                "black";
-              array[x][y] = -1;
-              break;
-            case -1:
-              document.getElementById(`${x}-${y}`).style.backgroundColor =
-                "white";
-              array[x][y] = 0;
-              break;
-          }
+          placeWalls(x, y);
         }
       });
     }
+  }
+}
+
+function placeWalls(x, y) {
+  switch (array[x][y]) {
+    case -1:
+      document.getElementById(`${x}-${y}`).style.backgroundColor = "white";
+      array[x][y] = 0;
+      break;
+    default:
+      document.getElementById(`${x}-${y}`).style.backgroundColor = "black";
+      array[x][y] = -1;
+      break;
   }
 }
 
@@ -117,4 +132,8 @@ function smokeRemove() {
       document.getElementById(`${x}-${y}`).style.backgroundColor = "white";
     }
   }
+}
+
+function getRandomInt(max) {
+  return Math.floor(Math.random() * max);
 }

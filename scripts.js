@@ -134,6 +134,26 @@ function smokeRemove() {
   }
 }
 
+function wallRemove() {
+  for (let x = 0; x < xSize; x++) {
+    for (let y = 0; y < ySize; y++) {
+      if (array[x][y] != -1) continue;
+      array[x][y] = 0;
+      document.getElementById(`${x}-${y}`).style.backgroundColor = "white";
+    }
+  }
+}
+
+function allRemove() {
+  for (let x = 0; x < xSize; x++) {
+    for (let y = 0; y < ySize; y++) {
+      if (array[x][y] == 0) continue;
+      array[x][y] = 0;
+      document.getElementById(`${x}-${y}`).style.backgroundColor = "white";
+    }
+  }
+}
+
 function getRandomInt(max) {
   return Math.floor(Math.random() * max);
 }

@@ -1,15 +1,13 @@
-var grid;
-const xSize = 50;
-const ySize = 50;
-const spreadValue = 20;
-var fal = false;
-
-var currentColor = 0;
+const xSize = 30;
+const ySize = 30;
+const spreadValue = 10;
 
 var array;
 
-onload = () => {
-  grid = document.querySelector(".yes");
+firstPoint = null;
+secondPoint = null;
+
+onload = () => {  
   array = createGrid(xSize, ySize);
   drawGrid();
 };
@@ -25,74 +23,12 @@ function createGrid(xSize, ySize) {
   return array;
 }
 
-async function updateGrid(xDef, yDef) {
-  array = createGrid(xSize, ySize);
-  array[xDef][yDef] = +spreadValue;
-
-  for (let i = 0; i < spreadValue; i++) {
-    for (let x = 0; x < xSize; x++) {
-      for (let y = 0; y < ySize; y++) {
-        if (array[x][y] != array[xDef][yDef] - i) continue;
-        if (
-          document.getElementById(`${x}-${y}`).style.backgroundColor == "black"
-        )
-          array[x][y] = -1;
-
-        if (array[x][y] == 0) continue;
-        if (array[x][y] == -1) continue;
-
-        try {
-          if (array[x + 1][y] == 0) {
-            array[x + 1][y] = array[x][y] - 1;
-          }
-        } catch {}
-        try {
-          if (array[x - 1][y] == 0) {
-            array[x - 1][y] = array[x][y] - 1;
-          }
-        } catch {}
-        try {
-          if (array[x][y + 1] == 0) {
-            array[x][y + 1] = array[x][y] - 1;
-          }
-        } catch {}
-        try {
-          if (array[x][y - 1] == 0) {
-            array[x][y - 1] = array[x][y] - 1;
-          }
-        } catch {}
-
-        switch (currentColor % 3) {
-          case 0:
-            document.getElementById(`${x}-${y}`).style.backgroundColor =
-              "rgb(255,0, 0)";
-            break;
-          case 1:
-            document.getElementById(`${x}-${y}`).style.backgroundColor =
-              "rgb(0,255, 0)";
-            break;
-          case 2:
-            document.getElementById(`${x}-${y}`).style.backgroundColor =
-              "rgb(0,0, 255)";
-            break;
-        }
-      }
-    }
-    await sleep(10);
-  }
-
-  currentColor++;
-}
-
-const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-
-function checkbox() {
-  fal = document.getElementById("kaksi").checked;
-}
-
 function drawGrid() {
+  let grid = document.querySelector(".gridHolder");
   grid.innerHTML = "";
   grid.style.gridTemplateColumns = `repeat(${xSize}, 1fr)`;
+  grid.style.gridTemplateRows = `repeat(${ySize}, 1fr)`;
+
   for (let x = 0; x < xSize; x++) {
     for (let y = 0; y < ySize; y++) {
       const div = document.createElement("div");
@@ -100,60 +36,60 @@ function drawGrid() {
       grid.appendChild(div);
       div.id = `${x}-${y}`;
 
+      div.innerHTML = `0`;
+
       div.addEventListener("click", () => {
-        if (!fal) {
-          updateGrid(x, y);
-        } else {
-          placeWalls(x, y);
-        }
+        GridClickEvent(x, y);
       });
     }
   }
 }
 
-function placeWalls(x, y) {
-  switch (array[x][y]) {
-    case -1:
-      document.getElementById(`${x}-${y}`).style.backgroundColor = "white";
-      array[x][y] = 0;
-      break;
-    default:
-      document.getElementById(`${x}-${y}`).style.backgroundColor = "black";
-      array[x][y] = -1;
-      break;
-  }
-}
+async function updateGrid(xDef, yDef) {
+  let spread = 1;
+  let foundTarget = false;
+  do{
+    for (let x = 0; x < xSize; x++) {
+      for (let y = 0; y < ySize; y++) {
+        
+        let distance = parseInt(Math.sqrt((xDef - x) ** 2 + (yDef - y) ** 2));
+        if (distance > spread) continue;
 
-function smokeRemove() {
-  for (let x = 0; x < xSize; x++) {
-    for (let y = 0; y < ySize; y++) {
-      if (array[x][y] == -1) continue;
-      array[x][y] = 0;
-      document.getElementById(`${x}-${y}`).style.backgroundColor = "white";
+        if(x == firstPoint.x && y == firstPoint.y){
+          foundTarget = true;
+        }
+         
+        array[x][y] = spread - distance + 1;
+        SetGridValue(x, y);
+        document.getElementById(`${x}-${y}`).style.backgroundColor = "rgb(125, 125, 125)";
+      }
     }
+    spread++;
+    await sleep(10);
+  }while(foundTarget == false);
+
+  ColorGrid(firstPoint.x, firstPoint.y, "red");
+  array[firstPoint.x][firstPoint.y] = 0;
+}
+
+function SetGridValue(x, y){
+  let divHolder = document.getElementById(`${x}-${y}`);
+  divHolder.innerHTML = array[x][y];
+}
+
+function ColorGrid(x, y, color){
+  let divHolder = document.getElementById(`${x}-${y}`);
+  divHolder.style.backgroundColor = color;
+}
+
+function GridClickEvent(x, y){
+  if(firstPoint == null){
+    firstPoint = {x, y};
+    ColorGrid(x, y , "red");
+  }
+  else if(secondPoint == null){
+    updateGrid(x, y);
   }
 }
 
-function wallRemove() {
-  for (let x = 0; x < xSize; x++) {
-    for (let y = 0; y < ySize; y++) {
-      if (array[x][y] != -1) continue;
-      array[x][y] = 0;
-      document.getElementById(`${x}-${y}`).style.backgroundColor = "white";
-    }
-  }
-}
-
-function allRemove() {
-  for (let x = 0; x < xSize; x++) {
-    for (let y = 0; y < ySize; y++) {
-      if (array[x][y] == 0) continue;
-      array[x][y] = 0;
-      document.getElementById(`${x}-${y}`).style.backgroundColor = "white";
-    }
-  }
-}
-
-function getRandomInt(max) {
-  return Math.floor(Math.random() * max);
-}
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));

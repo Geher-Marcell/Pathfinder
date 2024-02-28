@@ -3,7 +3,7 @@ body {
   padding: 0;
   background-color: white;
 }
-.yes {
+.gridHolder {
   width: 100vh;
   height: 100vh;
   position: absolute;
@@ -15,4 +15,10 @@ body {
 }
 .grid-item {
   border: 1px solid black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  -webkit-user-select: none; /* Safari */
+  -ms-user-select: none; /* IE 10 and IE 11 */
+  user-select: none; /* Standard syntax */
 }

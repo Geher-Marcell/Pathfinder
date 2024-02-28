@@ -45,13 +45,12 @@ function drawGrid() {
   }
 }
 
-async function updateGrid(xDef, yDef) {
+async function FindTarget(xDef, yDef) {
   let spread = 1;
   let foundTarget = false;
   do{
     for (let x = 0; x < xSize; x++) {
       for (let y = 0; y < ySize; y++) {
-        
         let distance = parseInt(Math.sqrt((xDef - x) ** 2 + (yDef - y) ** 2));
         if (distance > spread) continue;
 
@@ -70,6 +69,9 @@ async function updateGrid(xDef, yDef) {
 
   ColorGrid(firstPoint.x, firstPoint.y, "red");
   array[firstPoint.x][firstPoint.y] = 0;
+  SetGridValue(firstPoint.x, firstPoint.y);
+
+  Pathfind(firstPoint.x, firstPoint.y, xDef, yDef);
 }
 
 function SetGridValue(x, y){
@@ -88,8 +90,11 @@ function GridClickEvent(x, y){
     ColorGrid(x, y , "red");
   }
   else if(secondPoint == null){
-    updateGrid(x, y);
+    FindTarget(x, y);
   }
+}
+
+function Pathfind(startX, startY, endX, endY){
 }
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));

@@ -1,6 +1,5 @@
-const xSize = 30;
-const ySize = 30;
-const spreadValue = 10;
+const xSize = 50;
+const ySize = 50;
 
 var array;
 
@@ -36,7 +35,7 @@ function drawGrid() {
       grid.appendChild(div);
       div.id = `${x}-${y}`;
 
-      div.innerHTML = array[x][y];
+      //div.innerHTML = array[x][y];
 
       div.addEventListener("click", () => {
         GridClickEvent(x, y);
@@ -56,7 +55,7 @@ function drawGrid() {
 async function FindTarget(xDef, yDef) {
   let spread = 1;
   let foundTarget = false;
-  
+
   do{
     for (let x = 0; x < xSize; x++) {
       for (let y = 0; y < ySize; y++) {
@@ -82,8 +81,10 @@ async function FindTarget(xDef, yDef) {
 }
 
 function SetGridValue(x, y){
+  /*
   let divHolder = document.getElementById(`${x}-${y}`);
   divHolder.innerHTML = array[x][y];
+  */
 }
 
 function ColorGrid(x, y, color){
@@ -105,37 +106,23 @@ async function Pathfind(startX, startY, endX, endY){
   let currentX = startX;
   let currentY = startY;
   while(currentX != endX || currentY != endY){
-    let currentValue = array[currentX][currentY];
     ColorGrid(currentX, currentY, "green");
-    
-    if(array[currentX+1][currentY] > currentValue){
-      currentX = currentX+1;
-    }
-    else if(array[currentX-1][currentY] > currentValue){
-      currentX = currentX-1;
-    }
-    else if(array[currentX][currentY+1] > currentValue){
-      currentY = currentY+1;
-    }
-    else if(array[currentX][currentY-1] > currentValue){
-      currentY = currentY-1;
-    }
 
-    else if(array[currentX+1][currentY] == currentValue){
-      currentX = currentX+1;
-    }
-    else if(array[currentX-1][currentY] == currentValue){
-      currentX = currentX-1;
-    }
-    else if(array[currentX][currentY+1] == currentValue){
-      currentY = currentY+1;
-    }
-    else if(array[currentX][currentY-1] == currentValue){
-      currentY = currentY-1;
-    }
+    let neighbors = [];
+    if(currentX+1 < xSize) neighbors.push({x: currentX+1, y: currentY});
+    if(currentX-1 >= 0) neighbors.push({x: currentX-1, y: currentY});
+    if(currentY+1 < ySize) neighbors.push({x: currentX, y: currentY+1});
+    if(currentY-1 >= 0) neighbors.push({x: currentX, y: currentY-1});
+
+    neighbors.sort((a, b) => { return array[b.x][b.y] - array[a.x][a.y]; });
+
+    currentX += neighbors[0].x - currentX;
+    currentY += neighbors[0].y - currentY;
+
     await sleep(10);
   }
-  ColorGrid(currentX, currentY, "green");
+  ColorGrid(startX, startY, "blue");
+  ColorGrid(currentX, currentY, "blue");
 }
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));

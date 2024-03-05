@@ -44,8 +44,7 @@ function drawGrid() {
       div.addEventListener("mouseover", (event) => {
         if (event.buttons == 1) {
           array[x][y] = -1;
-          SetGridValue(x, y);
-          ColorGrid(x, y, "purple");
+          Visualize(x, y, "purple");
         }
       });
     }
@@ -53,7 +52,7 @@ function drawGrid() {
 }
 
 async function FindTarget(xDef, yDef) {
-  let spread = 50;
+  let spread = xSize * 2;
   let foundTarget = false;
   let i = 0;
 
@@ -66,8 +65,7 @@ async function FindTarget(xDef, yDef) {
 
         if (array[x][y] == -1) continue;
 
-        SetGridValue(x, y);
-        ColorGrid(x, y, "rgb(125, 125, 125)");
+        Visualize(x, y, "rgb(125, 125, 125)");
 
         if(x == firstPoint.x && y == firstPoint.y){ foundTarget = true; }
 
@@ -123,7 +121,7 @@ async function Pathfind(startX, startY, endX, endY){
   let currentX = startX;
   let currentY = startY;
   while(currentX != endX || currentY != endY){
-    ColorGrid(currentX, currentY, "green");
+    Visualize(currentX, currentY, "green");
 
     let neighbors = [];
     if(currentX+1 < xSize) neighbors.push({x: currentX+1, y: currentY});
@@ -138,8 +136,14 @@ async function Pathfind(startX, startY, endX, endY){
 
     await sleep(10);
   }
-  ColorGrid(startX, startY, "blue");
-  ColorGrid(currentX, currentY, "blue");
+  Visualize(startX, startY, "blue");
+  Visualize(currentX, currentY, "blue");
 }
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+
+function Visualize(x, y, color = "rgb(125, 125, 125)"){
+  ColorGrid(x, y, color);
+  SetGridValue(x, y);
+}

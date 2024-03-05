@@ -53,38 +53,55 @@ function drawGrid() {
 }
 
 async function FindTarget(xDef, yDef) {
-  let spread = 1;
+  let spread = 50;
   let foundTarget = false;
+  let i = 0;
 
-  do{
+  array[xDef][yDef] = +spread;
+  
+  while (+spread > i && foundTarget == false) {
     for (let x = 0; x < xSize; x++) {
       for (let y = 0; y < ySize; y++) {
-        let distance = parseInt(Math.sqrt((xDef - x) ** 2 + (yDef - y) ** 2));
-        if (distance > spread) continue;
+        if (array[x][y] != array[xDef][yDef] - i) continue;
 
-        if(array[x][y] == -1) continue;
+        if (array[x][y] == -1) continue;
 
-        if(x == firstPoint.x && y == firstPoint.y){
-          foundTarget = true;
-        }
-         
-        array[x][y] = spread - distance + 1;
         SetGridValue(x, y);
-        document.getElementById(`${x}-${y}`).style.backgroundColor = "rgb(125, 125, 125)";
+        ColorGrid(x, y, "rgb(125, 125, 125)");
+
+        if(x == firstPoint.x && y == firstPoint.y){ foundTarget = true; }
+
+        try {
+          if (array[x + 1][y] == 0) {
+            array[x + 1][y] = array[x][y] - 1;
+          }
+        } catch {}
+        try {
+          if (array[x - 1][y] == 0) {
+            array[x - 1][y] = array[x][y] - 1;
+          }
+        } catch {}
+        try {
+          if (array[x][y + 1] == 0) {
+            array[x][y + 1] = array[x][y] - 1;
+          }
+        } catch {}
+        try {
+          if (array[x][y - 1] == 0) {
+            array[x][y - 1] = array[x][y] - 1;
+          }
+        } catch {}
       }
     }
-    spread++;
+    i++;
     await sleep(10);
-  }while(foundTarget == false);
-
+  }
   Pathfind(firstPoint.x, firstPoint.y, xDef, yDef);
 }
 
 function SetGridValue(x, y){
-  /*
   let divHolder = document.getElementById(`${x}-${y}`);
   divHolder.innerHTML = array[x][y];
-  */
 }
 
 function ColorGrid(x, y, color){

@@ -52,7 +52,7 @@ function drawGrid() {
 }
 
 async function FindTarget(xDef, yDef) {
-  let spread = xSize * 2;
+  let spread = xSize * ySize;
   let foundTarget = false;
   let i = 0;
 
@@ -65,7 +65,7 @@ async function FindTarget(xDef, yDef) {
 
         if (array[x][y] == -1) continue;
 
-        Visualize(x, y, "rgb(125, 125, 125)");
+        Visualize(x, y);
 
         if(x == firstPoint.x && y == firstPoint.y){ foundTarget = true; }
 
